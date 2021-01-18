@@ -2,7 +2,6 @@
 
 ## Potential Projects
 
-- VR Teleport / ray jump movement
 - "Telepath" movement
 - Joystick playspace rotation
 - "Primary controller" manager
