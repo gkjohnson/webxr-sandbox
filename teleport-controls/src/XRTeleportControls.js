@@ -156,7 +156,7 @@ export class XRTeleportControls extends EventDispatcher {
         direction.copy( horizontalPoint ).sub( origin ).normalize();
 
         const hit = raycaster.intersectObject( castScene, true )[ 0 ];
-        if ( hit ) {
+        if ( hit && hit.face.normal.y > 0 ) {
 
             const point = hit.point;
             if ( ! arc.geometry.attributes.position || arc.geometry.attributes.position.count !== samples * 3 ) {
