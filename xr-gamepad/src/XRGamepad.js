@@ -33,16 +33,10 @@ export class XRGamepad extends Group {
         controller.addEventListener( 'connected', e => {
 
             const gamepad = new WrappedGamepad( e.data.gamepad );
-            gamepad.addEventListener( 'pressed', e => {
-
-                this.dispatchEvent( e );
-
-            } );
-            gamepad.addEventListener( 'released', e => {
-
-                this.dispatchEvent( e );
-
-            } );
+            gamepad.addEventListener( 'pressed', e => this.dispatchEvent( e ) );
+            gamepad.addEventListener( 'released', e => this.dispatchEvent( e ) );
+            gamepad.addEventListener( 'axis-pressed', e => this.dispatchEvent( e ) );
+            gamepad.addEventListener( 'axis-released', e => this.dispatchEvent( e ) );
 
             this.targetRayMode = e.data.targetRayMode;
             this.hand = e.data.handedness;
