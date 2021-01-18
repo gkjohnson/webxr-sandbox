@@ -2,6 +2,8 @@
 
 Bezier Curve teleport controls based on the "Tall Raycast" model from [Oculus' Teleport Curves](https://developer.oculus.com/blog/teleport-curves-with-the-gear-vr-controller/) documentation.
 
+[Demo here](https://gkjohnson.github.io/webxr-sandbox/teleport-controls/)!
+
 ## Possible Improvements
 
 - Provide an override to perform the raycast manually given the derived vector.
