@@ -4,5 +4,5 @@ Bezier Curve teleport controls based on the "Tall Raycast" model from [Oculus' T
 
 ## Possible Improvements
 
-- [ ] Provide an override to perform the raycast manually given the derived vector.
-- [ ] Provide a flag to disable automatically jumping to the next spot.
+- Provide an override to perform the raycast manually given the derived vector.
+- Provide a flag to disable automatically jumping to the next spot.
