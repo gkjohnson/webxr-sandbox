@@ -1,0 +1,150 @@
+<html>
+    <head>
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+		<meta charset="utf-8"/>
+
+		<title>VR IK Example</title>
+
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+				user-select: none;
+				box-sizing: border-box;
+                font-family: monospace;
+            }
+
+			html, body {
+				overflow: hidden;
+			}
+
+            #info {
+
+                display: flex;
+
+            }
+
+            #info div {
+                flex: 1;
+                padding: 5px;
+                white-space: pre;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="info">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+        <script type="module">
+            import { GamepadManager } from './src/GamepadManager.js';
+
+            const manager = new GamepadManager();
+            const gamepads = [
+                manager.getController( 0 ),
+                manager.getController( 1 ),
+                manager.getController( 2 ),
+                manager.getController( 3 ),
+            ];
+            gamepads.forEach( gp => {
+
+                gp.addEventListener( 'pressed', e => {
+
+                    console.log( e.target.gamepad.index, e.name, 'PRESSED' );
+
+                } );
+
+                gp.addEventListener( 'released', e => {
+
+                    console.log( e.target.gamepad.index, e.name, 'RELEASED' );
+
+                } );
+
+                gp.addEventListener( 'axis-pressed', e => {
+
+                    console.log( e.target.gamepad.index, e.name, 'PRESSED' );
+
+                } );
+
+                gp.addEventListener( 'axis-released', e => {
+
+                    console.log( e.target.gamepad.index, e.name, 'RELEASED' );
+
+                } );
+
+            } );
+
+            update();
+
+            function update() {
+
+                requestAnimationFrame( update );
+
+                manager.update();
+
+                // update all gamepads
+                const handles = gamepads;
+                handles.forEach( ( gp, i ) => {
+
+                    const element = document.getElementById( 'info' ).children[ i ];
+                    let content = '';
+                    if ( gp.connected ) {
+
+                        content += 'Controller Index ' + i + '\n';
+
+                        content += gp.gamepad.id + '\n\n';
+
+                        const buttons = gp.gamepad.buttons;
+                        buttons.forEach( ( b, i ) => {
+
+                            const name = gp.getButtonName( i );
+                            content += name.toString().padEnd( 15 ) + ' : ';
+
+                            if ( gp.getButtonPressed( i ) ) {
+
+                                content += 'PRESSED';
+
+                            } else if ( gp.getButtonHeld( i ) ) {
+
+                                content += 'HELD';
+
+                            } else {
+
+                                content += 'RELEASED';
+
+                            }
+
+                            content += '\n';
+
+                        } );
+
+                        const axes = gp.gamepad.axes;
+                        axes.forEach( ( a, i ) => {
+
+                            const name = gp.getAxisName( i );
+                            content += name.toString().padEnd( 15 ) + ' : ';
+                            content += gp.getAxis( i ) + '\n';
+
+                        } );
+
+                        element.style.display = 'initial';
+
+                    } else {
+
+                        element.style.display = 'none';
+
+                    }
+
+                    element.innerText = content;
+
+                } );
+
+            }
+
+        </script>
+
+    </body>
+
+</html>
