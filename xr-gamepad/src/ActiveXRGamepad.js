@@ -5,6 +5,12 @@ import {
 // Represents the last used gamepad
 export class ActiveXRGamepad extends Group {
 
+    get connected() {
+
+        return this.activeController.connected;
+
+    }
+
     constructor( controllers ) {
 
         super();
@@ -46,6 +52,8 @@ export class ActiveXRGamepad extends Group {
 
             controller.addEventListener( 'pressed', checkActiveCallback );
             controller.addEventListener( 'released', checkActiveCallback );
+            controller.addEventListener( 'axis-pressed', checkActiveCallback );
+            controller.addEventListener( 'axis-released', checkActiveCallback );
             controller.addEventListener( 'selectstart', checkActiveCallback );
             controller.addEventListener( 'selectend', checkActiveCallback );
 
@@ -54,8 +62,8 @@ export class ActiveXRGamepad extends Group {
                 controller.removeEventListener( 'connected', forwardCallback );
                 controller.removeEventListener( 'disconnected', forwardCallback );
 
-                controller.removeEventListener( 'pressed', checkActiveCallback );
-                controller.removeEventListener( 'released', checkActiveCallback );
+                controller.removeEventListener( 'axis-pressed', checkActiveCallback );
+                controller.removeEventListener( 'axis-released', checkActiveCallback );
                 controller.removeEventListener( 'selectstart', checkActiveCallback );
                 controller.removeEventListener( 'selectend', checkActiveCallback );
 
@@ -65,7 +73,18 @@ export class ActiveXRGamepad extends Group {
 
     }
 
-    update() {
+    update( updateSourceControllers = true ) {
+
+        const { activeController, controllers } = this;
+        if ( updateSourceControllers ) {
+
+            controllers.forEach( c => {
+
+                c.update();
+
+            } );
+
+        }
 
         this.position.copy( activeController.position );
         this.quaternion.copy( activeController.quaternion );

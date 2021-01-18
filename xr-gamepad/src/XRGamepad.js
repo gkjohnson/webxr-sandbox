@@ -22,13 +22,23 @@ export class XRGamepad extends Group {
 
     }
 
+    get connected() {
+
+        return ! ! this.gamepad;
+
+    }
+
     constructor( xrManager, index ) {
+
+        super();
 
         const grip = xrManager.getControllerGrip( index );
         const controller = xrManager.getController( index );
 
-        const modelRoot = new XRControllerModelFactory().createController( grip );
+        // TODO: how do we position this as expected
+        const modelRoot = new XRControllerModelFactory().createControllerModel( grip );
         grip.add( modelRoot );
+        this.add( grip );
 
         controller.addEventListener( 'connected', e => {
 
@@ -79,7 +89,16 @@ export class XRGamepad extends Group {
 
     update() {
 
-        this.gamepad.update();
+        const { controller, gamepad } = this;
+        if ( gamepad ) {
+
+            gamepad.update();
+
+        }
+
+        this.position.copy( controller.position );
+        this.quaternion.copy( controller.quaternion );
+        this.scale.copy( controller.scale );
 
     }
 
