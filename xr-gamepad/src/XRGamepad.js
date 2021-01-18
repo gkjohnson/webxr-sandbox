@@ -1,151 +1,150 @@
 import {
-    Group,
-    Object3D,
+	Group,
 } from '//unpkg.com/three@0.124.0/build/three.module.js';
 import {
-    XRControllerModelFactory,
+	XRControllerModelFactory,
 } from '//unpkg.com/three@0.124.0/examples/jsm/webxr/XRControllerModelFactory.js';
 import {
-    WrappedGamepad
+	WrappedGamepad
 } from './WrappedGamepad.js';
 
 export class XRGamepad extends Group {
 
-    get showControllerModel() {
+	get showControllerModel() {
 
-        return this.grip.visible;
+		return this.grip.visible;
 
-    }
+	}
 
-    set showControllerModel( v ) {
+	set showControllerModel( v ) {
 
-        this.grip.visible = v;
+		this.grip.visible = v;
 
-    }
+	}
 
-    get connected() {
+	get connected() {
 
-        return ! ! this.gamepad;
+		return ! ! this.gamepad;
 
-    }
+	}
 
-    constructor( xrManager, index ) {
+	constructor( xrManager, index ) {
 
-        super();
+		super();
 
-        const grip = xrManager.getControllerGrip( index );
-        const controller = xrManager.getController( index );
+		const grip = xrManager.getControllerGrip( index );
+		const controller = xrManager.getController( index );
 
-        const modelRoot = new XRControllerModelFactory().createControllerModel( grip );
-        grip.add( modelRoot );
-        this.add( grip );
-        grip.updateMatrixWorld = force => {
+		const modelRoot = new XRControllerModelFactory().createControllerModel( grip );
+		grip.add( modelRoot );
+		this.add( grip );
+		grip.updateMatrixWorld = force => {
 
-            // Ensure the visual pose is correct and not affected by this objects pose.
-            const parent = this.parent;
-            if ( parent ) {
+			// Ensure the visual pose is correct and not affected by this objects pose.
+			const parent = this.parent;
+			if ( parent ) {
 
-                grip.matrixWorld.multiplyMatrices( parent.matrixWorld, grip.matrix );
+				grip.matrixWorld.multiplyMatrices( parent.matrixWorld, grip.matrix );
 
-            } else {
+			} else {
 
-                grip.matrixWorld.copy( grip.matrix );
+				grip.matrixWorld.copy( grip.matrix );
 
-            }
+			}
 
-            const children = grip.children;
-            for ( let i = 0, l = children.length; i < l; i ++ ) {
+			const children = grip.children;
+			for ( let i = 0, l = children.length; i < l; i ++ ) {
 
-                children[ i ].updateMatrixWorld( force );
+				children[ i ].updateMatrixWorld( force );
 
-            }
+			}
 
-        }
+		};
 
-        controller.addEventListener( 'connected', e => {
+		controller.addEventListener( 'connected', e => {
 
-            const gamepad = new WrappedGamepad( e.data.gamepad );
-            gamepad.addEventListener( 'pressed', e => this.dispatchEvent( e ) );
-            gamepad.addEventListener( 'released', e => this.dispatchEvent( e ) );
-            gamepad.addEventListener( 'axis-pressed', e => this.dispatchEvent( e ) );
-            gamepad.addEventListener( 'axis-released', e => this.dispatchEvent( e ) );
+			const gamepad = new WrappedGamepad( e.data.gamepad );
+			gamepad.addEventListener( 'pressed', e => this.dispatchEvent( e ) );
+			gamepad.addEventListener( 'released', e => this.dispatchEvent( e ) );
+			gamepad.addEventListener( 'axis-pressed', e => this.dispatchEvent( e ) );
+			gamepad.addEventListener( 'axis-released', e => this.dispatchEvent( e ) );
 
-            this.targetRayMode = e.data.targetRayMode;
-            this.hand = e.data.handedness;
-            this.gamepad = gamepad;
+			this.targetRayMode = e.data.targetRayMode;
+			this.hand = e.data.handedness;
+			this.gamepad = gamepad;
 
-            this.dispatchEvent( e );
+			this.dispatchEvent( e );
 
-        } );
+		} );
 
-        controller.addEventListener( 'disconnected', e => {
+		controller.addEventListener( 'disconnected', e => {
 
-            this.targetRayMode = null;
-            this.hand = 'none';
-            this.gamepad = null;
+			this.targetRayMode = null;
+			this.hand = 'none';
+			this.gamepad = null;
 
-            this.dispatchEvent( e );
+			this.dispatchEvent( e );
 
-        } );
+		} );
 
-        controller.addEventListener( 'selectstart', e => {
+		controller.addEventListener( 'selectstart', e => {
 
-            this.dispatchEvent( e );
+			this.dispatchEvent( e );
 
-        } );
+		} );
 
-        controller.addEventListener( 'selectend', e => {
+		controller.addEventListener( 'selectend', e => {
 
-            this.dispatchEvent( e );
+			this.dispatchEvent( e );
 
-        } );
+		} );
 
-        this.index = index;
-        this.grip = grip;
-        this.controller = controller;
-        this.hand = 'none';
-        this.gamepad = null;
-        this.targetRayMode = null;
+		this.index = index;
+		this.grip = grip;
+		this.controller = controller;
+		this.hand = 'none';
+		this.gamepad = null;
+		this.targetRayMode = null;
 
-    }
+	}
 
-    update() {
+	update() {
 
-        const { controller, gamepad } = this;
-        if ( gamepad ) {
+		const { controller, gamepad } = this;
+		if ( gamepad ) {
 
-            gamepad.update();
+			gamepad.update();
 
-        }
+		}
 
-        this.position.copy( controller.position );
-        this.quaternion.copy( controller.quaternion );
-        this.scale.copy( controller.scale );
+		this.position.copy( controller.position );
+		this.quaternion.copy( controller.quaternion );
+		this.scale.copy( controller.scale );
 
-    }
+	}
 
-    getAxis( name ) {
+	getAxis( name ) {
 
-        return this.gamepad.getAxis( name );
+		return this.gamepad.getAxis( name );
 
-    }
+	}
 
-    getButtonValue( name ) {
+	getButtonValue( name ) {
 
-        return this.gamepad.getButtonValue( name );
+		return this.gamepad.getButtonValue( name );
 
-    }
+	}
 
-    getButtonHeld( name ) {
+	getButtonHeld( name ) {
 
-        return this.gamepad.getButtonHeld( name );
+		return this.gamepad.getButtonHeld( name );
 
-    }
+	}
 
-    getButtonPressed( name ) {
+	getButtonPressed( name ) {
 
-        return this.gamepad.getButtonPressed( name );
+		return this.gamepad.getButtonPressed( name );
 
-    }
+	}
 
 }

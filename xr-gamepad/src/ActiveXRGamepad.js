@@ -1,125 +1,125 @@
 import {
-    Group,
+	Group,
 } from '//unpkg.com/three@0.124.0/build/three.module.js';
 
 // Represents the last used gamepad
 export class ActiveXRGamepad extends Group {
 
-    get connected() {
+	get connected() {
 
-        return this.activeController.connected;
+		return this.activeController.connected;
 
-    }
+	}
 
-    constructor( controllers ) {
+	constructor( controllers ) {
 
-        super();
+		super();
 
-        this.controllers = controllers;
-        this.activeController = controllers[ 0 ];
-        this.disposeCallbacks = [];
+		this.controllers = controllers;
+		this.activeController = controllers[ 0 ];
+		this.disposeCallbacks = [];
 
-        const disposeCallbacks = this.disposeCallbacks;
-        for ( let i = 0, l = controllers.length; i < l; i ++ ) {
+		const disposeCallbacks = this.disposeCallbacks;
+		for ( let i = 0, l = controllers.length; i < l; i ++ ) {
 
-            const controller = controllers[ i ];
+			const controller = controllers[ i ];
 
-            const forwardCallback = e => {
+			const forwardCallback = e => {
 
-                if ( controller === this.activeController ) {
+				if ( controller === this.activeController ) {
 
-                    this.dispatchEvent( e );
+					this.dispatchEvent( e );
 
-                }
+				}
 
-            };
-            const checkActiveCallback = e => {
+			};
+			const checkActiveCallback = e => {
 
-                if ( this.activeController !== controller ) {
+				if ( this.activeController !== controller ) {
 
-                    this.activeController = controller;
+					this.activeController = controller;
 
-                } else {
+				} else {
 
-                    forwardCallback( e );
+					forwardCallback( e );
 
-                }
+				}
 
-            };
+			};
 
-            controller.addEventListener( 'connected', forwardCallback );
-            controller.addEventListener( 'disconnected', forwardCallback );
+			controller.addEventListener( 'connected', forwardCallback );
+			controller.addEventListener( 'disconnected', forwardCallback );
 
-            controller.addEventListener( 'pressed', checkActiveCallback );
-            controller.addEventListener( 'released', checkActiveCallback );
-            controller.addEventListener( 'axis-pressed', checkActiveCallback );
-            controller.addEventListener( 'axis-released', checkActiveCallback );
-            controller.addEventListener( 'selectstart', checkActiveCallback );
-            controller.addEventListener( 'selectend', checkActiveCallback );
+			controller.addEventListener( 'pressed', checkActiveCallback );
+			controller.addEventListener( 'released', checkActiveCallback );
+			controller.addEventListener( 'axis-pressed', checkActiveCallback );
+			controller.addEventListener( 'axis-released', checkActiveCallback );
+			controller.addEventListener( 'selectstart', checkActiveCallback );
+			controller.addEventListener( 'selectend', checkActiveCallback );
 
-            disposeCallbacks.push( () => {
+			disposeCallbacks.push( () => {
 
-                controller.removeEventListener( 'connected', forwardCallback );
-                controller.removeEventListener( 'disconnected', forwardCallback );
+				controller.removeEventListener( 'connected', forwardCallback );
+				controller.removeEventListener( 'disconnected', forwardCallback );
 
-                controller.removeEventListener( 'axis-pressed', checkActiveCallback );
-                controller.removeEventListener( 'axis-released', checkActiveCallback );
-                controller.removeEventListener( 'selectstart', checkActiveCallback );
-                controller.removeEventListener( 'selectend', checkActiveCallback );
+				controller.removeEventListener( 'axis-pressed', checkActiveCallback );
+				controller.removeEventListener( 'axis-released', checkActiveCallback );
+				controller.removeEventListener( 'selectstart', checkActiveCallback );
+				controller.removeEventListener( 'selectend', checkActiveCallback );
 
-            } );
+			} );
 
-        }
+		}
 
-    }
+	}
 
-    update( updateSourceControllers = true ) {
+	update( updateSourceControllers = true ) {
 
-        const { activeController, controllers } = this;
-        if ( updateSourceControllers ) {
+		const { activeController, controllers } = this;
+		if ( updateSourceControllers ) {
 
-            controllers.forEach( c => {
+			controllers.forEach( c => {
 
-                c.update();
+				c.update();
 
-            } );
+			} );
 
-        }
+		}
 
-        this.position.copy( activeController.position );
-        this.quaternion.copy( activeController.quaternion );
-        this.scale.copy( activeController.scale );
+		this.position.copy( activeController.position );
+		this.quaternion.copy( activeController.quaternion );
+		this.scale.copy( activeController.scale );
 
-    }
+	}
 
-    getAxis( name ) {
+	getAxis( name ) {
 
-        return this.activeController.getAxis( name );
+		return this.activeController.getAxis( name );
 
-    }
+	}
 
-    getButtonValue( name ) {
+	getButtonValue( name ) {
 
-        return this.activeController.getButtonValue( name );
+		return this.activeController.getButtonValue( name );
 
-    }
+	}
 
-    getButtonHeld( name ) {
+	getButtonHeld( name ) {
 
-        return this.activeController.getButtonHeld( name );
+		return this.activeController.getButtonHeld( name );
 
-    }
+	}
 
-    getButtonPressed( name ) {
+	getButtonPressed( name ) {
 
-        return this.activeController.getButtonPressed( name );
+		return this.activeController.getButtonPressed( name );
 
-    }
+	}
 
-    dispose() {
+	dispose() {
 
-        this.disposeCallbacks.forEach( cb => cb() );
+		this.disposeCallbacks.forEach( cb => cb() );
 
-    }
+	}
 
 }

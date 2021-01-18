@@ -2,67 +2,67 @@ import { WrappedGamepad } from './WrappedGamepad.js';
 
 export class GamepadManager {
 
-    constructor() {
+	constructor() {
 
-        this.controllers = [];
+		this.controllers = [];
 
-        window.addEventListener( 'gamepadconnected', e => {
+		window.addEventListener( 'gamepadconnected', e => {
 
-            const { gamepad } = e;
-            const { controllers } = this;
-            if ( ! controllers[ gamepad.index ] ) {
+			const { gamepad } = e;
+			const { controllers } = this;
+			if ( ! controllers[ gamepad.index ] ) {
 
-                controllers[ gamepad.index ] = new WrappedGamepad();
+				controllers[ gamepad.index ] = new WrappedGamepad();
 
-            }
+			}
 
-            controllers[ gamepad.index ].connect( gamepad );
+			controllers[ gamepad.index ].connect( gamepad );
 
-        } );
+		} );
 
-        window.addEventListener( 'gamepaddisconnected', e => {
+		window.addEventListener( 'gamepaddisconnected', e => {
 
 
-            const { gamepad } = e;
-            const { controllers } = this;
-            if ( controllers[ gamepad.index ] ) {
+			const { gamepad } = e;
+			const { controllers } = this;
+			if ( controllers[ gamepad.index ] ) {
 
-                controllers[ gamepad.index ].disconnect();
+				controllers[ gamepad.index ].disconnect();
 
-            }
+			}
 
-        } );
+		} );
 
-    }
+	}
 
-    getController( index ) {
+	getController( index ) {
 
-        const { controllers } = this;
-        if ( ! controllers[ index ] ) {
+		const { controllers } = this;
+		if ( ! controllers[ index ] ) {
 
-            const gamepad = navigator.getGamepads()[ index ];
-            controllers[ index ] = new WrappedGamepad( gamepad );
+			const gamepad = navigator.getGamepads()[ index ];
+			controllers[ index ] = new WrappedGamepad( gamepad );
 
-        }
-        return controllers[ index ];
+		}
+		return controllers[ index ];
 
-    }
+	}
 
-    update() {
+	update() {
 
-        const { controllers } = this;
-        const gamepads = navigator.getGamepads();
-        for ( let i = 0, l = controllers.length; i < l; i ++ ) {
+		const { controllers } = this;
+		const gamepads = navigator.getGamepads();
+		for ( let i = 0, l = controllers.length; i < l; i ++ ) {
 
-            const controller = controllers[ i ];
-            if ( controller ) {
+			const controller = controllers[ i ];
+			if ( controller ) {
 
-                controller.update( gamepads[ i ] );
+				controller.update( gamepads[ i ] );
 
-            }
+			}
 
-        }
+		}
 
-    }
+	}
 
 }

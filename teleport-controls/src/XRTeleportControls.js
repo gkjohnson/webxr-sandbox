@@ -1,10 +1,10 @@
 import {
-    Line,
-    Raycaster,
-    Vector3,
-    MathUtils,
-    BufferAttribute,
-    EventDispatcher,
+	Line,
+	Raycaster,
+	Vector3,
+	MathUtils,
+	BufferAttribute,
+	EventDispatcher,
 } from '//unpkg.com/three@0.124.0/build/three.module.js';
 
 // https://developer.oculus.com/blog/teleport-curves-with-the-gear-vr-controller/
@@ -23,197 +23,197 @@ const tempVector1 = new Vector3();
 
 function sampleCurve( start, end, control, t, target ) {
 
-    Q0.lerpVectors( start, control, t );
+	Q0.lerpVectors( start, control, t );
 
-    Q1.lerpVectors( control, end, t );
+	Q1.lerpVectors( control, end, t );
 
-    target.lerpVectors( Q0, Q1, t )
+	target.lerpVectors( Q0, Q1, t );
 
 }
 
 export class XRTeleportControls extends EventDispatcher {
 
-    get enabled() {
+	get enabled() {
 
-        return this._enabled;
+		return this._enabled;
 
-    }
+	}
 
-    set enabled( v ) {
+	set enabled( v ) {
 
-        this._enabled = v;
-        this._arc.visible = v;
-        if ( ! v && this.hit ) {
+		this._enabled = v;
+		this._arc.visible = v;
+		if ( ! v && this.hit ) {
 
-            this.dispatchEvent( { type: 'end-hit' } );
-            this.hit = false;
+			this.dispatchEvent( { type: 'end-hit' } );
+			this.hit = false;
 
-        }
+		}
 
-    }
+	}
 
-    constructor( controller, playSpace, castScene ) {
+	constructor( controller, playSpace, castScene ) {
 
-        super();
+		super();
 
-        this._enabled = true;
-        this.arc = new Line();
-        this.arc.frustumCulled = false;
-        this.controller = controller;
-        this.castScene = castScene;
-        this.raycaster = new Raycaster();
-        this.playSpace = playSpace;
+		this._enabled = true;
+		this.arc = new Line();
+		this.arc.frustumCulled = false;
+		this.controller = controller;
+		this.castScene = castScene;
+		this.raycaster = new Raycaster();
+		this.playSpace = playSpace;
 
-        this.hit = false;
-        this.hitPoint = new Vector3();
-        this.hitInfo = null;
+		this.hit = false;
+		this.hitPoint = new Vector3();
+		this.hitInfo = null;
 
-        this.samples = 25;
-        this.minControllerAngle = 60;
-        this.maxControllerAngle = 120;
-        this.maxDistance = 7.5;
-        this.minDistance = .2;
-        this.castHeight = 3;
+		this.samples = 25;
+		this.minControllerAngle = 60;
+		this.maxControllerAngle = 120;
+		this.maxDistance = 7.5;
+		this.minDistance = .2;
+		this.castHeight = 3;
 
-        this._selectStartCallback = () => {
+		this._selectStartCallback = () => {
 
-            if ( ! this.enabled || ! this.hit ) {
+			if ( ! this.enabled || ! this.hit ) {
 
-                return;
+				return;
 
-            }
+			}
 
-            this.getPlaySpaceAdjustedPosition( playSpace.position );
+			this.getPlaySpaceAdjustedPosition( playSpace.position );
 
-        };
+		};
 
-        controller.addEventListener( 'selectstart', this._selectStartCallback );
+		controller.addEventListener( 'selectstart', this._selectStartCallback );
 
-    }
+	}
 
-    getPlaySpaceAdjustedPosition( target ) {
+	getPlaySpaceAdjustedPosition( target ) {
 
-        const { playSpace, controller, hitPoint } = this;
-        const parent = playSpace.parent;
+		const { playSpace, controller, hitPoint } = this;
+		const parent = playSpace.parent;
 
-        const controllerWorld = tempVector0;
-        const playSpaceWorld = tempVector1;
+		const controllerWorld = tempVector0;
+		const playSpaceWorld = tempVector1;
 
-        controllerWorld.set( 0, 0, 0 ).applyMatrix4( controller.matrixWorld );
-        playSpaceWorld.set( 0, 0, 0 ).applyMatrix4( playSpace.matrixWorld );
+		controllerWorld.set( 0, 0, 0 ).applyMatrix4( controller.matrixWorld );
+		playSpaceWorld.set( 0, 0, 0 ).applyMatrix4( playSpace.matrixWorld );
 
-        playSpaceWorld.sub( controllerWorld )
-        playSpaceWorld.y = 0;
+		playSpaceWorld.sub( controllerWorld );
+		playSpaceWorld.y = 0;
 
-        playSpaceWorld.add( hitPoint );
+		playSpaceWorld.add( hitPoint );
 
-        target.copy( playSpaceWorld );
+		target.copy( playSpaceWorld );
 
-        parent.worldToLocal( target );
+		parent.worldToLocal( target );
 
-    }
+	}
 
-    update() {
+	update() {
 
-        if ( this.enabled === false ) {
+		if ( this.enabled === false ) {
 
-            return;
+			return;
 
-        }
+		}
 
-        const {
-            arc,
-            raycaster,
-            controller,
-            samples,
-            minControllerAngle,
-            maxControllerAngle,
-            maxDistance,
-            minDistance,
-            castHeight,
-            castScene,
-        } = this;
-        const { ray } = raycaster;
-        const { origin, direction } = ray;
+		const {
+			arc,
+			raycaster,
+			controller,
+			samples,
+			minControllerAngle,
+			maxControllerAngle,
+			maxDistance,
+			minDistance,
+			castHeight,
+			castScene,
+		} = this;
+		const { ray } = raycaster;
+		const { origin, direction } = ray;
 
-        origin.set( 0, 0, 0 ).applyMatrix4( controller.matrixWorld );
-        forwardDirection.set( 0, 0, - 1 ).transformDirection( controller.matrixWorld ).normalize();
-        horizontalDirection.copy( forwardDirection );
-        horizontalDirection.y = 0;
-        horizontalDirection.normalize();
+		origin.set( 0, 0, 0 ).applyMatrix4( controller.matrixWorld );
+		forwardDirection.set( 0, 0, - 1 ).transformDirection( controller.matrixWorld ).normalize();
+		horizontalDirection.copy( forwardDirection );
+		horizontalDirection.y = 0;
+		horizontalDirection.normalize();
 
-        // get the target horizontal ray point
-        const controllerAngle = forwardDirection.angleTo( downVector ) * MathUtils.RAD2DEG;
-        const pitch = MathUtils.clamp( controllerAngle, minControllerAngle, maxControllerAngle );
-        const pitchRange = maxControllerAngle - minControllerAngle;
-        const t = ( pitch - minControllerAngle ) / pitchRange;
-        const horizontalDistance = MathUtils.lerp( minDistance, maxDistance, t );
+		// get the target horizontal ray point
+		const controllerAngle = forwardDirection.angleTo( downVector ) * MathUtils.RAD2DEG;
+		const pitch = MathUtils.clamp( controllerAngle, minControllerAngle, maxControllerAngle );
+		const pitchRange = maxControllerAngle - minControllerAngle;
+		const t = ( pitch - minControllerAngle ) / pitchRange;
+		const horizontalDistance = MathUtils.lerp( minDistance, maxDistance, t );
 
-        horizontalPoint.copy( origin ).addScaledVector( horizontalDirection, horizontalDistance );
+		horizontalPoint.copy( origin ).addScaledVector( horizontalDirection, horizontalDistance );
 
-        // construct tall ray
-        origin.y += castHeight;
-        direction.copy( horizontalPoint ).sub( origin ).normalize();
+		// construct tall ray
+		origin.y += castHeight;
+		direction.copy( horizontalPoint ).sub( origin ).normalize();
 
-        const hit = raycaster.intersectObject( castScene, true )[ 0 ];
-        if ( hit && hit.face.normal.y > 0 ) {
+		const hit = raycaster.intersectObject( castScene, true )[ 0 ];
+		if ( hit && hit.face.normal.y > 0 ) {
 
-            const point = hit.point;
-            if ( ! arc.geometry.attributes.position || arc.geometry.attributes.position.count !== samples * 3 ) {
+			const point = hit.point;
+			if ( ! arc.geometry.attributes.position || arc.geometry.attributes.position.count !== samples * 3 ) {
 
-                arc.geometry.setAttribute(
-                    'position',
-                    new BufferAttribute( new Float32Array( samples * 3 ), 3 ),
-                );
+				arc.geometry.setAttribute(
+					'position',
+					new BufferAttribute( new Float32Array( samples * 3 ), 3 ),
+				);
 
-            }
+			}
 
-            origin.y -= castHeight;
-            controlPoint.copy( origin ).addScaledVector( forwardDirection, horizontalDistance * 0.75 );
-            const positionAttr = arc.geometry.getAttribute( 'position' );
-            for ( let i = 0; i < samples; i ++ ) {
+			origin.y -= castHeight;
+			controlPoint.copy( origin ).addScaledVector( forwardDirection, horizontalDistance * 0.75 );
+			const positionAttr = arc.geometry.getAttribute( 'position' );
+			for ( let i = 0; i < samples; i ++ ) {
 
-                const t = i / ( samples - 1 );
-                sampleCurve( origin, point, controlPoint, t, sampleVector );
-                positionAttr.setXYZ( i, sampleVector.x, sampleVector.y, sampleVector.z );
+				const t = i / ( samples - 1 );
+				sampleCurve( origin, point, controlPoint, t, sampleVector );
+				positionAttr.setXYZ( i, sampleVector.x, sampleVector.y, sampleVector.z );
 
-            }
+			}
 
-            positionAttr.needsUpdate = true;
+			positionAttr.needsUpdate = true;
 
-            const wasHit = this.hit;
-            this.hit = true;
-            this.hitInfo = hit;
-            this.hitPoint.copy( point );
-            arc.visible = true;
+			const wasHit = this.hit;
+			this.hit = true;
+			this.hitInfo = hit;
+			this.hitPoint.copy( point );
+			arc.visible = true;
 
-            if ( ! wasHit ) {
+			if ( ! wasHit ) {
 
-                this.dispatchEvent( { type: 'start-hit' } );
+				this.dispatchEvent( { type: 'start-hit' } );
 
-            }
+			}
 
-        } else {
+		} else {
 
-            const wasHit = this.hit;
-            this.hit = false;
-            this.hitInfo = null;
-            arc.visible = false;
+			const wasHit = this.hit;
+			this.hit = false;
+			this.hitInfo = null;
+			arc.visible = false;
 
-            if ( wasHit ) {
+			if ( wasHit ) {
 
-                this.dispatchEvent( { type: 'end-hit' } );
+				this.dispatchEvent( { type: 'end-hit' } );
 
-            }
+			}
 
-        }
+		}
 
-    }
+	}
 
-    dispose() {
+	dispose() {
 
-        this.controller.removeEventListener( 'selectstart', this._selectStartCallback );
+		this.controller.removeEventListener( 'selectstart', this._selectStartCallback );
 
-    }
+	}
 
 }
