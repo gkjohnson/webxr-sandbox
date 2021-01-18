@@ -1,5 +1,6 @@
 import {
     Group,
+    Object3D,
 } from '//unpkg.com/three@0.124.0/build/three.module.js';
 import {
     XRControllerModelFactory,
@@ -35,10 +36,31 @@ export class XRGamepad extends Group {
         const grip = xrManager.getControllerGrip( index );
         const controller = xrManager.getController( index );
 
-        // TODO: how do we position this as expected
         const modelRoot = new XRControllerModelFactory().createControllerModel( grip );
         grip.add( modelRoot );
         this.add( grip );
+        grip.updateMatrixWorld = force => {
+
+            // Ensure the visual pose is correct and not affected by this objects pose.
+            const parent = this.parent;
+            if ( parent ) {
+
+                grip.matrixWorld.multiplyMatrices( parent.matrixWorld, grip.matrix );
+
+            } else {
+
+                grip.matrixWorld.copy( grip.matrix );
+
+            }
+
+            const children = grip.children;
+            for ( let i = 0, l = children.length; i < l; i ++ ) {
+
+                children[ i ].updateMatrixWorld( force );
+
+            }
+
+        }
 
         controller.addEventListener( 'connected', e => {
 

@@ -10,6 +10,7 @@ import {
 // https://developer.oculus.com/blog/teleport-curves-with-the-gear-vr-controller/
 
 const horizontalDirection = new Vector3();
+const forwardDirection = new Vector3();
 const horizontalPoint = new Vector3();
 const downVector = new Vector3( 0, - 1, 0 );
 const sampleVector = new Vector3();
@@ -53,6 +54,8 @@ export class XRTeleportControls extends EventDispatcher {
 
     constructor( controller, playSpace, castScene ) {
 
+        super();
+
         this._enabled = true;
         this.arc = new Line();
         this.controller = controller;
@@ -62,12 +65,13 @@ export class XRTeleportControls extends EventDispatcher {
 
         this.hit = false;
         this.hitPoint = new Vector3();
+        this.hitInfo = null;
 
         this.samples = 50;
         this.minControllerAngle = 60;
         this.maxControllerAngle = 120;
         this.maxDistance = 20;
-        this.castHeight = 5;
+        this.castHeight = 1;
 
         this._selectStartCallback = () => {
 
@@ -109,7 +113,7 @@ export class XRTeleportControls extends EventDispatcher {
 
     update() {
 
-        if ( enabled === false ) {
+        if ( this.enabled === false ) {
 
             return;
 
@@ -124,32 +128,35 @@ export class XRTeleportControls extends EventDispatcher {
             maxControllerAngle,
             maxDistance,
             castHeight,
+            castScene,
         } = this;
         const { ray } = raycaster;
         const { origin, direction } = ray;
 
         origin.set( 0, 0, 0 ).applyMatrix4( controller.matrixWorld );
-        horizontalRay.set( 0, 0, - 1 ).transformDirection( controller.matrixWorld );
-        horizontalRay.y = 0;
+        forwardDirection.set( 0, 0, - 1 ).transformDirection( controller.matrixWorld ).normalize();
+        horizontalDirection.copy( forwardDirection );
+        horizontalDirection.y = 0;
+        horizontalDirection.normalize();
 
         // get the target horizontal ray point
-        const controllerAngle = horizontalDirection.angleTo( downVector );
+        const controllerAngle = forwardDirection.angleTo( downVector ) * MathUtils.RAD2DEG;
         const pitch = MathUtils.clamp( controllerAngle, minControllerAngle, maxControllerAngle );
         const pitchRange = maxControllerAngle - minControllerAngle;
         const t = (pitch - minControllerAngle) / pitchRange;
         const horizontalDistance = maxDistance * t;
 
-        horizontalPoint.copy( origin ).addScaledVector( direction, horizontalDistance );
+        horizontalPoint.copy( origin ).addScaledVector( horizontalDirection, horizontalDistance );
 
         // construct tall ray
         origin.y += castHeight;
-        direction.copy( horizontalPoint ).subtract( origin );
+        direction.copy( horizontalPoint ).sub( origin );
 
         const hit = raycaster.intersectObject( castScene, true )[ 0 ];
-        if ( hit.point ) {
+        if ( hit ) {
 
             const point = hit.point;
-            if ( arc.geometry.attributes.position.count !== samples * 3 ) {
+            if ( ! arc.geometry.attributes.position || arc.geometry.attributes.position.count !== samples * 3 ) {
 
                 arc.geometry.setAttribute(
                     'position',
@@ -158,6 +165,8 @@ export class XRTeleportControls extends EventDispatcher {
 
             }
 
+            origin.y -= castHeight;
+            controlPoint.copy( origin ).addScaledVector( horizontalDirection, horizontalDistance / 2 );
             const positionAttr = arc.geometry.getAttribute( 'position' );
             for ( let i = 0; i < samples; i ++ ) {
 
@@ -167,11 +176,11 @@ export class XRTeleportControls extends EventDispatcher {
 
             }
 
-
             positionAttr.needsUpdate = true;
 
             const wasHit = this.hit;
             this.hit = true;
+            this.hitInfo = hit;
             this.hitPoint.copy( point );
             arc.visible = true;
 
@@ -185,6 +194,7 @@ export class XRTeleportControls extends EventDispatcher {
 
             const wasHit = this.hit;
             this.hit = false;
+            this.hitInfo = null;
             arc.visible = false;
 
             if ( wasHit ) {
