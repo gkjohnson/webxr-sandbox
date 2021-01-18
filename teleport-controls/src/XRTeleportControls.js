@@ -58,6 +58,7 @@ export class XRTeleportControls extends EventDispatcher {
 
         this._enabled = true;
         this.arc = new Line();
+        this.arc.frustumCulled = false;
         this.controller = controller;
         this.castScene = castScene;
         this.raycaster = new Raycaster();
@@ -67,15 +68,16 @@ export class XRTeleportControls extends EventDispatcher {
         this.hitPoint = new Vector3();
         this.hitInfo = null;
 
-        this.samples = 50;
+        this.samples = 25;
         this.minControllerAngle = 60;
         this.maxControllerAngle = 120;
-        this.maxDistance = 20;
-        this.castHeight = 1;
+        this.maxDistance = 7.5;
+        this.minDistance = .2;
+        this.castHeight = 3;
 
         this._selectStartCallback = () => {
 
-            if ( this.enabled && this.hit ) {
+            if ( ! this.enabled || ! this.hit ) {
 
                 return;
 
@@ -127,6 +129,7 @@ export class XRTeleportControls extends EventDispatcher {
             minControllerAngle,
             maxControllerAngle,
             maxDistance,
+            minDistance,
             castHeight,
             castScene,
         } = this;
@@ -143,14 +146,14 @@ export class XRTeleportControls extends EventDispatcher {
         const controllerAngle = forwardDirection.angleTo( downVector ) * MathUtils.RAD2DEG;
         const pitch = MathUtils.clamp( controllerAngle, minControllerAngle, maxControllerAngle );
         const pitchRange = maxControllerAngle - minControllerAngle;
-        const t = (pitch - minControllerAngle) / pitchRange;
-        const horizontalDistance = maxDistance * t;
+        const t = ( pitch - minControllerAngle ) / pitchRange;
+        const horizontalDistance = MathUtils.lerp( minDistance, maxDistance, t );
 
         horizontalPoint.copy( origin ).addScaledVector( horizontalDirection, horizontalDistance );
 
         // construct tall ray
         origin.y += castHeight;
-        direction.copy( horizontalPoint ).sub( origin );
+        direction.copy( horizontalPoint ).sub( origin ).normalize();
 
         const hit = raycaster.intersectObject( castScene, true )[ 0 ];
         if ( hit ) {
@@ -166,7 +169,7 @@ export class XRTeleportControls extends EventDispatcher {
             }
 
             origin.y -= castHeight;
-            controlPoint.copy( origin ).addScaledVector( horizontalDirection, horizontalDistance / 2 );
+            controlPoint.copy( origin ).addScaledVector( forwardDirection, horizontalDistance * 0.75 );
             const positionAttr = arc.geometry.getAttribute( 'position' );
             for ( let i = 0; i < samples; i ++ ) {
 
