@@ -9,4 +9,4 @@ NOTE: In Chrome the gamepad handles do not seem to dynamically update and they m
 ## TODO
 
 - Docs
-- Only load the controller models once it's been requested.
+- Only load the controller models once it's been requested / if they're visible.
