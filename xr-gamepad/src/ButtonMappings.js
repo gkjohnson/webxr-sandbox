@@ -33,6 +33,16 @@ const playstation = {
 
 };
 
+const xrStandard = {
+
+	buttons: [ 'Trigger', 'Squeeze', '', '', 'A', 'B' ],
+
+	axes: [ 'LStick-X', 'LStick-Y' ],
+
+	buttonNames: [ 'Trigger', 'Squeeze', '', '', 'A', 'B' ],
+
+};
+
 // TODO: Oculus
 
 function mappingToObject( obj ) {
@@ -51,7 +61,7 @@ function mappingToObject( obj ) {
 
 }
 
-export function getMappings( id ) {
+export function getMappings( id, mapping ) {
 
 	if ( /xbox|xinput/i.test( id ) ) {
 
@@ -62,6 +72,12 @@ export function getMappings( id ) {
 	if ( /playstation/i.test( id ) ) {
 
 		return mappingToObject( playstation );
+
+	}
+
+	if ( mapping === 'xr-standard') {
+
+		return mappingToObject( xrStandard );
 
 	}
 

@@ -80,6 +80,16 @@ function init() {
 	workspace.add( controller0, controller1 );
 
 	activeController = new ActiveXRGamepad( [ controller0, controller1 ] );
+	activeController.addEventListener( 'axis-pressed', e => {
+
+		if ( e.name === 'LStick-X' ) {
+
+			const direction = Math.sign( e.value );
+			workspace.rotation.y += direction * Math.PI / 4;
+
+		}
+
+	} );
 	workspace.add( activeController );
 
 	teleportControls = new XRTeleportControls( activeController, workspace, platforms );

@@ -137,7 +137,7 @@ export class WrappedGamepad extends EventDispatcher {
 		this.buttonState = new Array( gamepad.buttons.length ).fill( RELEASED );
 		this.axesState = new Array( gamepad.axes.length ).fill( 0 );
 
-		const mapping = getMappings( gamepad.id );
+		const mapping = getMappings( gamepad.id, gamepad.mapping );
 		if ( mapping ) {
 
 			this.buttonMappings = mapping.buttons;
