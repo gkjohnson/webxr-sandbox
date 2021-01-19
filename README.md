@@ -8,7 +8,6 @@ Set of WebXR experiments and extensions for three.js. These pages are a sandbox 
 
 - "Telepath" movement
 - Joystick playspace rotation
-- "Primary controller" manager
 - Stencil buffer camera clip caps
 - Portals
 - Screen effects
