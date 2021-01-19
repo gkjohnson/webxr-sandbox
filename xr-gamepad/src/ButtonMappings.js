@@ -75,7 +75,7 @@ export function getMappings( id, mapping ) {
 
 	}
 
-	if ( mapping === 'xr-standard') {
+	if ( mapping === 'xr-standard' ) {
 
 		return mappingToObject( xrStandard );
 
