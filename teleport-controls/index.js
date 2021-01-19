@@ -92,7 +92,7 @@ function init() {
 		if ( e.name === 'LStick-X' ) {
 
 			const direction = Math.sign( e.value );
-			workspace.rotation.y += direction * Math.PI / 4;
+			workspace.rotation.y += - direction * Math.PI / 4;
 
 		}
 
