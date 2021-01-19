@@ -24,15 +24,20 @@
 
             }
 
-            #info div {
-                flex: 1;
-                padding: 5px;
-                white-space: pre;
-            }
+			#info {
+				position: absolute;
+				text-align: center;
+				margin: auto;
+				width: 100%;
+				padding: 10px;
+				color: white;
+				pointer-events: none;
+				font-family: monospace;
+			}
         </style>
     </head>
     <body>
-        <div id="info"></div>
+        <div id="info">Use the trigger to jump to arc teleport position and joysticks to rotate play space.</div>
         <script type="module" src="./index.js"></script>
     </body>
 
