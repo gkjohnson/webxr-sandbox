@@ -35,15 +35,13 @@ const playstation = {
 
 const xrStandard = {
 
-	buttons: [ 'Trigger', 'Squeeze', '', '', 'A', 'B' ],
+	buttons: [ 'Trigger', 'Squeeze', '', 'LStick', 'A', 'B' ],
 
-	axes: [ 'LStick-X', 'LStick-Y' ],
+	axes: [ '', '', 'LStick-X', 'LStick-Y' ],
 
-	buttonNames: [ 'Trigger', 'Squeeze', '', '', 'A', 'B' ],
+	buttonNames: [ 'Trigger', 'Squeeze', '', 'Left Stick', 'A', 'B' ],
 
 };
-
-// TODO: Oculus
 
 function mappingToObject( obj ) {
 
