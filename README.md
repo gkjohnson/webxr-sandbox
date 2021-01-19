@@ -12,3 +12,7 @@ Set of WebXR experiments and extensions for three.js. These pages are a sandbox 
 - Portals
 - Screen effects
 - Display 3d stereo images
+
+## Notes
+
+- [Debugging over USB for Mozilla Reality](https://developer.mozilla.org/en-US/docs/Tools/about:debugging)
