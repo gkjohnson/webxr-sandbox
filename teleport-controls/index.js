@@ -80,7 +80,14 @@ function init() {
 	workspace.add( controller0, controller1 );
 
 	activeController = new ActiveXRGamepad( [ controller0, controller1 ] );
+	activeController.addEventListener( 'pressed', e => {
+
+		console.log( e );
+
+	} );
 	activeController.addEventListener( 'axis-pressed', e => {
+
+		console.log( e );
 
 		if ( e.name === 'LStick-X' ) {
 
