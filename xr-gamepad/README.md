@@ -9,4 +9,4 @@ NOTE: In Chrome the gamepad handles do not seem to dynamically update and they m
 ## TODO
 
 - Docs
-- Use remote debugging to find out what the controller buttons enumerate to on Mozilla Reality.
+- Only load the controller models once it's been requested.
