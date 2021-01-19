@@ -16,6 +16,7 @@ function init() {
 	const controller0 = new XRGamepad( renderer.xr, 0 );
 	const controller1 = new XRGamepad( renderer.xr, 1 );
 
+	// follows the position and fires events from the last interacted with xr controller
 	activeController = new ActiveXRGamepad( [ controller0, controller1 ] );
 	activeController.addEventListener( 'pressed', () => { ... } );
 	activeController.addEventListener( 'axis-pressed', () => { ... } );
