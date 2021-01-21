@@ -1,6 +1,6 @@
 # Stereo Image Rendering
 
-Shader for rendering stereo image pairs on a plane. Stereo images from [](), [](), []().
+Shader for rendering stereo image pairs on a plane. Stereo images from [lockhaven.edu](https://www.lockhaven.edu/~dsimanek/3d/stereo/3dgallery22.htm).
 
 ## TODO
 
