@@ -4,6 +4,8 @@
 
 Set of WebXR experiments and extensions for three.js. These pages are a sandbox of examples and not necessarily ready to include in projects and may require some work to properly and performantly integrate.
 
+Note most demos are built and tested with two, 6 DoF controllers.
+
 ## Potential Projects
 
 - "Telepath" movement
