@@ -169,7 +169,14 @@ export class XRTeleportControls extends EventDispatcher {
 			}
 
 			origin.y -= castHeight;
-			controlPoint.copy( origin ).addScaledVector( forwardDirection, horizontalDistance * 0.75 );
+
+			controlPoint.lerpVectors( origin, point, 0.5 );
+
+			const tallArcHeight = 2.0;
+			const shortArcHeight = 1.5;
+			const arcHeight = MathUtils.lerp( shortArcHeight, tallArcHeight, horizontalDistance / maxDistance );
+			controlPoint.y += MathUtils.clamp( arcHeight, shortArcHeight, tallArcHeight );
+
 			const positionAttr = arc.geometry.getAttribute( 'position' );
 			for ( let i = 0; i < samples; i ++ ) {
 
