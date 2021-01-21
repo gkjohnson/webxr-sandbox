@@ -11,6 +11,18 @@ export class ActiveXRGamepad extends Group {
 
 	}
 
+	get selectPressed() {
+
+		return this.activeController.selectPressed;
+
+	}
+
+	get squeezePressed() {
+
+		return this.activeController.squeezePressed;
+
+	}
+
 	constructor( controllers ) {
 
 		super();
@@ -56,16 +68,22 @@ export class ActiveXRGamepad extends Group {
 			controller.addEventListener( 'axis-released', checkActiveCallback );
 			controller.addEventListener( 'selectstart', checkActiveCallback );
 			controller.addEventListener( 'selectend', checkActiveCallback );
+			controller.addEventListener( 'squeezestart', checkActiveCallback );
+			controller.addEventListener( 'squeezeend', checkActiveCallback );
 
 			disposeCallbacks.push( () => {
 
 				controller.removeEventListener( 'connected', forwardCallback );
 				controller.removeEventListener( 'disconnected', forwardCallback );
 
+				controller.removeEventListener( 'pressed', checkActiveCallback );
+				controller.removeEventListener( 'released', checkActiveCallback );
 				controller.removeEventListener( 'axis-pressed', checkActiveCallback );
 				controller.removeEventListener( 'axis-released', checkActiveCallback );
 				controller.removeEventListener( 'selectstart', checkActiveCallback );
 				controller.removeEventListener( 'selectend', checkActiveCallback );
+				controller.removeEventListener( 'squeezestart', checkActiveCallback );
+				controller.removeEventListener( 'squeezeend', checkActiveCallback );
 
 			} );
 

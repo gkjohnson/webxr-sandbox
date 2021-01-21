@@ -89,12 +89,28 @@ export class XRGamepad extends Group {
 
 		controller.addEventListener( 'selectstart', e => {
 
+			this.selectPressed = true;
 			this.dispatchEvent( e );
 
 		} );
 
 		controller.addEventListener( 'selectend', e => {
 
+			this.selectPressed = false;
+			this.dispatchEvent( e );
+
+		} );
+
+		controller.dispatchEvent( 'squeezestart', e => {
+
+			this.squeezePressed = true;
+			this.dispatchEvent( e );
+
+		} );
+
+		controller.dispatchEvent( 'squeezeend', e => {
+
+			this.squeezePressed = false;
 			this.dispatchEvent( e );
 
 		} );
@@ -105,6 +121,8 @@ export class XRGamepad extends Group {
 		this.hand = 'none';
 		this.gamepad = null;
 		this.targetRayMode = null;
+		this.squeezePressed = false;
+		this.selectPressed = false;
 
 	}
 
