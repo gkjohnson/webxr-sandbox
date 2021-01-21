@@ -172,7 +172,7 @@ export class XRTeleportControls extends EventDispatcher {
 
 			controlPoint.lerpVectors( origin, point, 0.5 );
 
-			const arcHeight = 0.5;
+			const arcHeight = MathUtils.lerp( 0.1, 1.0, horizontalDistance / maxDistance );
 			controlPoint.y = Math.max( origin.y, point.y + arcHeight );
 
 			const positionAttr = arc.geometry.getAttribute( 'position' );
