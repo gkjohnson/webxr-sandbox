@@ -6,6 +6,10 @@ Helper for initializing and visualizing and XR Gamepad and forwarding button pre
 
 NOTE: In Chrome the gamepad handles do not seem to dynamically update and they must be polled via navigator.getGamepads(). Firefox updates the original gamepad object. The xr gamepad objects seem to be updated the same way in both Chrome and Firefox.
 
+## Use
+
+### XR Setup
+
 ```js
 let activeController;
 
@@ -29,6 +33,43 @@ function render() {
 	renderer.render( scene, camera );
 
 }
+```
+
+### Traditional Gamepad Setup
+
+```js
+let gamepadManager;
+let controller0, controller1;
+
+function init() {
+
+	// ...
+	
+	gamepadManager = new GamepadManager();
+	controller0 = gamepadManager.getController( 0 );
+	controller1 = gamepadManager.getController( 1 );
+
+	controller0.addEventListener( 'pressed', () => { ... } );
+	controller0.addEventListener( 'axis-pressed', () => { ... } );
+	
+	controller1.addEventListener( 'pressed', () => { ... } );
+	controller1.addEventListener( 'axis-pressed', () => { ... } );
+
+}
+
+function render() {
+
+	gamepadManager.update();
+	if ( controller0.getButtonHeld( 'A' ) ) {
+	
+		// do something
+	
+	}
+	
+	renderer.render( scene, camera );
+
+}
+
 ```
 
 ## TODO
