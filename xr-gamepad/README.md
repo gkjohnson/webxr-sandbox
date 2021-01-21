@@ -60,6 +60,7 @@ function init() {
 function render() {
 
 	gamepadManager.update();
+
 	if ( controller0.getButtonHeld( 'A' ) ) {
 	
 		// do something
@@ -76,3 +77,8 @@ function render() {
 
 - Docs
 - Only load the controller models once it's been requested / if they're visible.
+- Add a default button naming scheme
+- Dispatch events from GamepadManager when controllers are connected or disconnected.
+- Add getters to GamepadManager to check if a controller is connected.
+- Consider an API that lets you create a WrappedGamepad based on controller index and update it individually.
+
