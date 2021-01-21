@@ -40,7 +40,7 @@ function init() {
 	scene.background = new Color( 0x131619 );
 
 	workspace = new Group();
-	workspace.position.z = 3;
+	workspace.position.z = 2;
 	scene.add( workspace );
 
 	camera = new PerspectiveCamera();
@@ -110,10 +110,10 @@ function init() {
 	scene.add( planeGroup );
 
 	plane0 = new Mesh( new PlaneBufferGeometry(), new MeshBasicMaterial() );
-	plane0.layers.set( 0b011 );
+	plane0.layers.mask = 0b101;
 
 	plane1 = new Mesh( new PlaneBufferGeometry(), new MeshBasicMaterial() );
-	plane1.layers.set( 0b100 );
+	plane1.layers.mask = 0b010;
 	planeGroup.add( plane0, plane1 );
 
 	window.plane0 = plane0;
@@ -185,12 +185,12 @@ function render() {
 
 	} else {
 
-		planeGroup.position.set( 0, 0, - 0.05 );
+		planeGroup.position.set( 0, 0, - 0.2 );
 		targetController.localToWorld( planeGroup.position );
 
-		tempEuler.set( Math.PI / 2, 0, 0 );
+		tempEuler.set( - Math.PI / 2, 0, 0 );
 		targetController.getWorldQuaternion( tempQuaternion );
-		planeGroup.quaternion.setFromEuler( tempEuler ).multiply( tempQuaternion );
+		planeGroup.quaternion.setFromEuler( tempEuler ).premultiply( tempQuaternion );
 
 		planeGroup.scale.setScalar( 0.2 );
 
