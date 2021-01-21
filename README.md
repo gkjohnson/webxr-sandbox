@@ -8,6 +8,8 @@ Set of WebXR experiments and extensions for three.js. These pages are a sandbox 
 
 - "Telepath" movement
 - Mouse and Keyboard VR emulation
+	- Move first person camera with WASD and right click / drag
+	- Move and trigger controller with mouse clicks
 - Portals
 - Screen effects
 
