@@ -1,0 +1,38 @@
+<html>
+    <head>
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+		<meta charset="utf-8"/>
+
+		<title>XR Stereo Images</title>
+
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+				user-select: none;
+				box-sizing: border-box;
+                font-family: monospace;
+            }
+
+			html, body {
+				overflow: hidden;
+			}
+
+			#info {
+				position: absolute;
+				text-align: center;
+				margin: auto;
+				width: 100%;
+				padding: 10px;
+				color: white;
+				pointer-events: none;
+				font-family: monospace;
+			}
+        </style>
+    </head>
+    <body>
+        <div id="info">Use the trigger to snap the image to the controller.</div>
+        <script type="module" src="./index.js"></script>
+    </body>
+
+</html>
