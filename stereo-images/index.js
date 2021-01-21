@@ -110,7 +110,10 @@ function init() {
 	scene.add( planeGroup );
 
 	plane0 = new Mesh( new PlaneBufferGeometry(), new MeshBasicMaterial() );
+	plane0.layers.set( 0x011 );
+
 	plane1 = new Mesh( new PlaneBufferGeometry(), new MeshBasicMaterial() );
+	plane1.layers.set( 0x100 );
 	planeGroup.add( plane0, plane1 );
 
 	window.plane0 = plane0;
@@ -178,17 +181,18 @@ function render() {
 
 		planeGroup.position.set( 0, 1.5, 0 );
 		planeGroup.quaternion.identity();
+		planeGroup.scale.setScalar( 1 );
 
 	} else {
 
 		planeGroup.position.set( 0, 0, - 0.05 );
 		targetController.localToWorld( planeGroup.position );
 
-		tempEuler.set( 0, 0, Math.PI / 4 );
+		tempEuler.set( 0, 0, 0 );
 		targetController.getWorldQuaternion( tempQuaternion );
 		planeGroup.quaternion.setFromEuler( tempEuler ).premultiply( tempQuaternion );
 
-		planeGroup.scale.setScalar( 0.1 );
+		planeGroup.scale.setScalar( 0.2 );
 
 	}
 
