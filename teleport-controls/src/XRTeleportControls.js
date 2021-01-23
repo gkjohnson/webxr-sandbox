@@ -168,12 +168,24 @@ export class XRTeleportControls extends EventDispatcher {
 
 			}
 
+			// adjust origin back to controller position
 			origin.y -= castHeight;
 
+			// get the center position from the origin to hit point
 			controlPoint.lerpVectors( origin, point, 0.5 );
+			controlPoint.y = 0;
 
+			// projected forward
+			horizontalDirection.copy( forwardDirection );
+			horizontalDirection.y = 0;
+
+			// projected hit point
+			tempVector0.copy( point ).sub( origin ).multiplyScalar( 0.5 );
+			tempVector0.y = 0;
+
+			const controllerDirectionHeight = forwardDirection.y * tempVector0.length() / horizontalDirection.length();
 			const arcHeight = MathUtils.lerp( 0.1, 1.0, horizontalDistance / maxDistance );
-			controlPoint.y = Math.max( origin.y, point.y + arcHeight );
+			controlPoint.y = Math.max( origin.y, point.y + arcHeight, origin.y + controllerDirectionHeight );
 
 			const positionAttr = arc.geometry.getAttribute( 'position' );
 			for ( let i = 0; i < samples; i ++ ) {
