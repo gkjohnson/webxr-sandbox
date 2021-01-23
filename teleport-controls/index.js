@@ -11,6 +11,7 @@ import {
 	Mesh,
 	BoxBufferGeometry,
 	MeshStandardMaterial,
+	Vector3,
 } from '//unpkg.com/three@0.124.0/build/three.module.js';
 import { VRButton } from '//unpkg.com/three@0.124.0/examples/jsm/webxr/VRButton.js';
 import { GUI } from '//unpkg.com/three@0.124.0/examples/jsm/libs/dat.gui.module.js';
@@ -85,7 +86,21 @@ function init() {
 		if ( e.name === 'LStick-X' ) {
 
 			const direction = Math.sign( e.value );
-			workspace.rotation.y += - direction * Math.PI / 4;
+			const angle = - direction * Math.PI / 4;
+			workspace.rotation.y += angle;
+
+			const cameraPosition = new Vector3();
+			const upVector = new Vector3( 0, 1, 0 );
+
+			cameraPosition
+				.set( 0, 0, 0 )
+				.applyMatrix4( camera.matrixWorld );
+
+			workspace
+				.position
+				.sub( cameraPosition )
+				.applyAxisAngle( upVector, angle )
+				.add( cameraPosition );
 
 		}
 
