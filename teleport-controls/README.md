@@ -10,3 +10,4 @@ Bezier Curve teleport controls based on the "Tall Raycast" model from [Oculus' T
 - Provide a flag to disable automatically jumping to the next spot.
 - Add ability to quickly interpolate to the target location.
 - Provide an option to perform an iterative parabolic cast.
+- Center joystick rotation about the head rather than the playspace center.
