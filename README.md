@@ -15,10 +15,6 @@ Note most demos are built and tested with two, 6 DoF controllers.
 - Portals
 - Screen effects
 
-## Next
-
-- Stencil buffer camera clip caps
-
 ## Notes
 
 - [Debugging over USB for Mozilla Reality](https://developer.mozilla.org/en-US/docs/Tools/about:debugging)
