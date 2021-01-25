@@ -18,6 +18,7 @@ import {
 	MeshPhongMaterial,
 	Fog,
 	Clock,
+	TorusKnotBufferGeometry,
 } from '//unpkg.com/three@0.124.0/build/three.module.js';
 import { VRButton } from '//unpkg.com/three@0.124.0/examples/jsm/webxr/VRButton.js';
 import { GUI } from '//unpkg.com/three@0.124.0/examples/jsm/libs/dat.gui.module.js';
@@ -66,12 +67,29 @@ function init() {
 	group = new Group();
 
 	const material = new MeshPhongMaterial( { flatShading: true } );
-	for ( let i = 0; i < 2000; i ++ ) {
+	for ( let i = 0; i < 1000; i ++ ) {
 
-		const geometry = new IcosahedronBufferGeometry(
-			0.01 + Math.random() * 0.02,
-			Math.floor( Math.random() * 4 ),
-		);
+		let geometry;
+		if ( i % 2 === 0 ) {
+
+			geometry = new IcosahedronBufferGeometry(
+				0.01 + Math.random() * 0.02,
+				Math.floor( Math.random() * 4 ),
+			);
+
+		} else {
+
+			const radius = 0.01 + Math.random() * 0.02;
+			geometry = new TorusKnotBufferGeometry(
+				radius,
+				radius / 3,
+				64,
+				8,
+				1 + Math.floor( Math.random() * 4 ),
+				2 + Math.floor( Math.random() * 4 ),
+			).toNonIndexed();
+
+		}
 		const mesh = new Mesh(
 			geometry,
 			material,
