@@ -9,11 +9,6 @@ import {
 	Group,
 	Scene,
 	Mesh,
-	MeshBasicMaterial,
-	PlaneBufferGeometry,
-	TextureLoader,
-	Euler,
-	Quaternion,
 	IcosahedronBufferGeometry,
 	MeshPhongMaterial,
 	Fog,
@@ -33,6 +28,7 @@ let group, skinnedProxy, clock;
 const params = {
 
 	useSkinnedBatching: true,
+	scale: 1,
 
 };
 
@@ -140,6 +136,7 @@ function init() {
 		}
 
 	} );
+	gui.add( params, 'scale', 1, 15 );
 
 	onResize();
 	window.addEventListener( 'resize', onResize );
@@ -174,6 +171,8 @@ function render() {
 			object.position.y = - 5;
 
 		}
+
+		object.scale.setScalar( params.scale );
 
 	}
 

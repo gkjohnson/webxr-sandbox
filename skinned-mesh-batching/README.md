@@ -16,3 +16,4 @@ Utility for merging multiple meshes in a scene into a single skinned mesh to cut
 ## TODO
 
 - [ ] Add raycasting to demo
+- [ ] See if depth prepass improves performance for overlapping meshes
