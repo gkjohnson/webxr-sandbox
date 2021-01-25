@@ -8,6 +8,7 @@ Utility for merging multiple meshes in a scene into a single skinned mesh to cut
 - Material arrays are not supported.
 - The proxied mesh root is expected to have no parent and not be reparented unless the batching proxy skinned mesh finished with.
 - The skinned proxy meshes geometry bounding boxes are only kept up to date if frustumCulled = true.
+- Duplicate meshes will be retained on the original meshes unless manually deleted. They are useful to keep for frustum culling.
 
 ## TODO
 

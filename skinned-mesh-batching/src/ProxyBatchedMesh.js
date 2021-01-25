@@ -146,13 +146,14 @@ export class ProxyBatchedMesh extends Group {
 				geometry.applyMatrix4( mesh.matrixWorld );
 
 				const count = geometry.attributes.position.count;
+				const cons = count > 256 ? Uint16Array : Uint8Array;
 				geometry.addBufferAttribute(
 					'skinIndex',
-					new BufferAttribute( new Uint8Array( count * 4 ).fill( index ) ),
+					new BufferAttribute( new cons( count * 4 ).fill( index ) ),
 				);
 				geometry.addBufferAttribute(
 					'skinWeight',
-					new BufferAttribute( new Uint8Array( count * 4 ).fill( 0.25 ) ),
+					new BufferAttribute( new cons( count * 4 ).fill( 0.25 ) ),
 				);
 
 				const bone = new ProxyBone( mesh );
