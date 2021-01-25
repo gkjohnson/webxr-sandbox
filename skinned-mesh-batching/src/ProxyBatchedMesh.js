@@ -6,6 +6,7 @@ import {
 	Skeleton,
 	Box3,
 	Matrix4,
+	Sphere,
 } from '//unpkg.com/three@0.124.0/build/three.module.js';
 import {
 	BufferGeometryUtils,
@@ -40,7 +41,13 @@ class ProxySkinnedMesh extends SkinnedMesh {
 		const { geometry, matrixWorld, proxied, frustumCulled } = this;
 		if ( ! geometry.boundingBox ) {
 
-			geometry = new Box3();
+			geometry.boundingBox = new Box3();
+
+		}
+
+		if ( ! geometry.boundingSphere ) {
+
+			geometry.boundingSphere = new Sphere();
 
 		}
 
@@ -56,6 +63,7 @@ class ProxySkinnedMesh extends SkinnedMesh {
 			}
 			inverseMatrix.copy( matrixWorld ).invert();
 			box.applyMatrix4( inverseMatrix );
+			box.getBoundingSphere( geometry.boundingSphere );
 
 		}
 
@@ -76,6 +84,11 @@ class ProxyBone extends Bone {
 
 		const { matrixWorld, proxied } = this;
 		matrixWorld.copy( proxied.matrixWorld );
+		matrixWorld.decompose(
+			this.position,
+			this.quaternion,
+			this.scale,
+		);
 
 	}
 
@@ -91,7 +104,11 @@ export class ProxyBatchedMesh extends Group {
 
 	set visible( v ) {
 
-		this.proxied.visible = v;
+		if ( this.proxied ) {
+
+			this.proxied.visible = v;
+
+		}
 
 	}
 
@@ -143,17 +160,27 @@ export class ProxyBatchedMesh extends Group {
 			const geometries = meshes.map( ( mesh, index ) => {
 
 				const geometry = mesh.geometry.clone();
-				geometry.applyMatrix4( mesh.matrixWorld );
 
 				const count = geometry.attributes.position.count;
 				const cons = count > 256 ? Uint16Array : Uint8Array;
-				geometry.addBufferAttribute(
+				geometry.setAttribute(
 					'skinIndex',
-					new BufferAttribute( new cons( count * 4 ).fill( index ) ),
+					new BufferAttribute( new cons( count * 4 ).fill( index ), 4 ),
 				);
-				geometry.addBufferAttribute(
+
+				const weights = new Uint8Array( count * 4 );
+				for ( let i = 0, l = weights.length; i < l; i ++ ) {
+
+					const i4 = i * 4;
+					weights[ i4 ] = 255;
+					weights[ i4 + 1 ] = 0;
+					weights[ i4 + 2 ] = 0;
+					weights[ i4 + 3 ] = 0;
+
+				}
+				geometry.setAttribute(
 					'skinWeight',
-					new BufferAttribute( new cons( count * 4 ).fill( 0.25 ) ),
+					new BufferAttribute( weights, 4, true ),
 				);
 
 				const bone = new ProxyBone( mesh );
@@ -162,13 +189,15 @@ export class ProxyBatchedMesh extends Group {
 				return geometry;
 
 			} );
-			const mergedGeometry = BufferGeometryUtils.mergeBufferGeometry( geometries );
 
+			material.skinning = true;
 			const skeleton = new Skeleton( bones );
-			const skinnedMesh = new ProxySkinnedMesh( material, mergedGeometry, meshes );
+			const mergedGeometry = BufferGeometryUtils.mergeBufferGeometries( geometries );
+			const skinnedMesh = new ProxySkinnedMesh( mergedGeometry, material, meshes );
 			skinnedMesh.bind( skeleton );
 
-			this.add( skinnedMesh, ...bones );
+			skinnedMesh.add( ...bones );
+			this.add( skinnedMesh );
 
 		} );
 
@@ -183,9 +212,14 @@ export class ProxyBatchedMesh extends Group {
 
 		}
 
+		if ( proxied.parent === null ) {
+
+			proxied.parent = this;
+
+		}
 		this.updateWorldMatrix( false, false );
 		proxied.updateMatrixWorld( ...args );
-		return this.updateMatrixWorld( ...args );
+		return super.updateMatrixWorld( ...args );
 
 	}
 
