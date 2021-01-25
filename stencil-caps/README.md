@@ -2,7 +2,7 @@
 
 Demonstration of using stencil materials to render a clip cap when the user moves their head inside of a mesh.
 
-[Demo here](https://gkjohnson.github.io/webxr-sandbox/skinned-mesh-batching/)!
+[Demo here](https://gkjohnson.github.io/webxr-sandbox/stencil-caps/)!
 
 ## Possible Improvements
 
