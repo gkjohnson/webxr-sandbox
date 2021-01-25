@@ -158,7 +158,7 @@ function onResize() {
 
 function render() {
 
-	const delta = clock.getDelta();
+	const delta = Math.min( 0.025, clock.getDelta() );
 	const objects = group.children;
 	for ( let i = 0, l = objects.length; i < l; i ++ ) {
 
