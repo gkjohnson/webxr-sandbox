@@ -203,7 +203,7 @@ export class ProxyBatchedMesh extends Group {
 		const { proxied } = this;
 		if ( proxied.parent && proxied.parent !== this ) {
 
-			console.warn( 'ProxyBatchedMesh : Proxy mesh is not expected to have parent.' );
+			console.warn( 'ProxyBatchedMesh : Proxy mesh is expected to not have parent.' );
 
 		}
 

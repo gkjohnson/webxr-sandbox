@@ -120,6 +120,7 @@ function init() {
 	scene.add( activeController, controller0, controller1 );
 
 	const gui = new GUI();
+	gui.width = 300;
 	gui.add( params, 'useSkinnedBatching' ).onChange( v => {
 
 		if ( v ) {
