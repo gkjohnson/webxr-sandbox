@@ -179,7 +179,7 @@ function render() {
 	}
 
 	group.scale.setScalar( params.sceneScale );
-	group.position.z = - 1 + params.sceneScale
+	group.position.z = - 1 + params.sceneScale;
 
 	renderer.render( scene, camera );
 
