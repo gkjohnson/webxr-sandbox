@@ -25,7 +25,7 @@ import { XRGamepad } from '../xr-gamepad/src/XRGamepad.js';
 import { ActiveXRGamepad } from '../xr-gamepad/src/ActiveXRGamepad.js';
 import { ProxyBatchedMesh } from './src/ProxyBatchedMesh.js';
 
-let scene, camera, renderer, workspace;
+let scene, camera, renderer;
 let activeController;
 let group, skinnedProxy, clock;
 
@@ -45,12 +45,8 @@ function init() {
 	scene.background = new Color( 0x131619 );
 	scene.fog = new Fog( 0x131619, 3, 5.5 );
 
-	workspace = new Group();
-	workspace.position.z = 2;
-	scene.add( workspace );
-
 	camera = new PerspectiveCamera();
-	workspace.add( camera );
+	scene.add( camera );
 
 	renderer = new WebGLRenderer( { antialias: true } );
 	renderer.outputEncoding = sRGBEncoding;
