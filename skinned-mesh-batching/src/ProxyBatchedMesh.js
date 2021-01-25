@@ -83,12 +83,8 @@ class ProxyBone extends Bone {
 	updateMatrixWorld() {
 
 		const { matrixWorld, proxied } = this;
+		proxied.updateMatrixWorld( true );
 		matrixWorld.copy( proxied.matrixWorld );
-		matrixWorld.decompose(
-			this.position,
-			this.quaternion,
-			this.scale,
-		);
 
 	}
 
@@ -156,17 +152,12 @@ export class ProxyBatchedMesh extends Group {
 		// Merge all geometries with common materials into a single proxy skinned mesh
 		materialToMeshes.forEach( ( meshes, material ) => {
 
+			const weightCons = meshes.length > 256 ? Uint16Array : Uint8Array;
 			const bones = [];
 			const geometries = meshes.map( ( mesh, index ) => {
 
 				const geometry = mesh.geometry.clone();
-
 				const count = geometry.attributes.position.count;
-				const cons = count > 256 ? Uint16Array : Uint8Array;
-				geometry.setAttribute(
-					'skinIndex',
-					new BufferAttribute( new cons( count * 4 ).fill( index ), 4 ),
-				);
 
 				const weights = new Uint8Array( count * 4 );
 				for ( let i = 0, l = weights.length; i < l; i ++ ) {
@@ -181,6 +172,10 @@ export class ProxyBatchedMesh extends Group {
 				geometry.setAttribute(
 					'skinWeight',
 					new BufferAttribute( weights, 4, true ),
+				);
+				geometry.setAttribute(
+					'skinIndex',
+					new BufferAttribute( new weightCons( count * 4 ).fill( index ), 4 ),
 				);
 
 				const bone = new ProxyBone( mesh );
