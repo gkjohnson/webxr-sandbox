@@ -28,7 +28,8 @@ let group, skinnedProxy, clock;
 const params = {
 
 	useSkinnedBatching: true,
-	scale: 1,
+	objectScale: 1,
+	sceneScale: 1,
 
 };
 
@@ -136,7 +137,8 @@ function init() {
 		}
 
 	} );
-	gui.add( params, 'scale', 1, 15 );
+	gui.add( params, 'objectScale', 1, 15 );
+	gui.add( params, 'sceneScale', 0.01, 1, 0.01 );
 
 	onResize();
 	window.addEventListener( 'resize', onResize );
@@ -172,9 +174,12 @@ function render() {
 
 		}
 
-		object.scale.setScalar( params.scale );
+		object.scale.setScalar( params.objectScale );
 
 	}
+
+	group.scale.setScalar( params.sceneScale );
+	group.position.z = - 1 + params.sceneScale
 
 	renderer.render( scene, camera );
 
