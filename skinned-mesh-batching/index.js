@@ -104,6 +104,7 @@ function init() {
 	}
 
 	skinnedProxy = new ProxyBatchedMesh( group );
+	material.skinning = true;
 	scene.add( skinnedProxy );
 
 	// vr

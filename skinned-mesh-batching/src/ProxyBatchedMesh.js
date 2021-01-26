@@ -253,7 +253,6 @@ export class ProxyBatchedMesh extends Group {
 
 			} );
 
-			material.skinning = true;
 			const skeleton = new Skeleton( bones );
 			const mergedGeometry = BufferGeometryUtils.mergeBufferGeometries( geometries );
 
