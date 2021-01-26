@@ -139,65 +139,61 @@ export class MaterialReducer {
 		const textures = [];
 		const materials = [];
 		let replaced = 0;
-		object.traverse( c => {
 
-			if ( c.isMesh && c.material ) {
+		const processMaterial = material => {
 
-				// Check if another material matches this one
-				const material = c.material;
-				let foundMaterial = null;
-				for ( const i in materials ) {
+			// Check if another material matches this one
+			let foundMaterial = null;
+			for ( const i in materials ) {
 
-					const otherMaterial = materials[ i ];
-					if ( this.areEqual( material, otherMaterial ) ) {
+				const otherMaterial = materials[ i ];
+				if ( this.areEqual( material, otherMaterial ) ) {
 
-						foundMaterial = otherMaterial;
-
-					}
+					foundMaterial = otherMaterial;
 
 				}
 
-				if ( foundMaterial ) {
+			}
 
-					c.material = foundMaterial;
-					replaced ++;
+			if ( foundMaterial ) {
 
-				} else {
+				replaced ++;
+				return foundMaterial;
 
-					materials.push( material );
+			} else {
 
-					if ( this.shareTextures ) {
+				materials.push( material );
 
-						// See if there's another texture that matches the ones on this material
-						for ( const key in material ) {
+				if ( this.shareTextures ) {
 
-							if ( ! material.hasOwnProperty( key ) ) continue;
+					// See if there's another texture that matches the ones on this material
+					for ( const key in material ) {
 
-							const value = material[ key ];
-							if ( value && value.isTexture && value.image instanceof Image ) {
+						if ( ! material.hasOwnProperty( key ) ) continue;
 
-								let foundTexture = null;
-								for ( const i in textures ) {
+						const value = material[ key ];
+						if ( value && value.isTexture && value.image instanceof Image ) {
 
-									const texture = textures[ i ];
-									if ( this.areEqual( texture, value ) ) {
+							let foundTexture = null;
+							for ( const i in textures ) {
 
-										foundTexture = texture;
-										break;
+								const texture = textures[ i ];
+								if ( this.areEqual( texture, value ) ) {
 
-									}
-
-								}
-
-								if ( foundTexture ) {
-
-									material[ key ] = foundTexture;
-
-								} else {
-
-									textures.push( value );
+									foundTexture = texture;
+									break;
 
 								}
+
+							}
+
+							if ( foundTexture ) {
+
+								material[ key ] = foundTexture;
+
+							} else {
+
+								textures.push( value );
 
 							}
 
@@ -207,10 +203,36 @@ export class MaterialReducer {
 
 				}
 
+				return material;
+
+			}
+
+		};
+
+		object.traverse( c => {
+
+			if ( c.isMesh && c.material ) {
+
+				const material = c.material;
+				if ( Array.isArray( material ) ) {
+
+					for ( let i = 0; i < material.length; i ++ ) {
+
+						material[ i ] = processMaterial( material[ i ] );
+
+					}
+
+				} else {
+
+					c.material = processMaterial( material );
+
+				}
+
 			}
 
 		} );
-		return replaced;
+
+		return { replaced, retained: materials.length };
 
 	}
 
