@@ -7,6 +7,7 @@ import {
 	Box3,
 	Matrix4,
 	Sphere,
+	BufferGeometry,
 } from '//unpkg.com/three@0.124.0/build/three.module.js';
 import {
 	BufferGeometryUtils,
@@ -124,39 +125,83 @@ export class ProxyBatchedMesh extends Group {
 		this.proxied = root;
 
 		// Find all shared materials
-		const materialToMeshes = new Map();
+		const materialToGeometry = new Map();
 		root.updateMatrixWorld( true );
 		root.traverse( c => {
 
 			if ( c.isMesh ) {
 
-				const material = c.material;
-				if ( Array.isArray( material ) ) {
+				if ( Array.isArray( c.material ) ) {
 
-					throw new Error( 'ProxyBatchedMesh : Material arrays not supported.' );
+					const materials = c.material;
+					const hadIndex = Boolean( c.geometry.index );
+					const geometry = hadIndex ? c.geometry.clone().toNonIndexed() : c.geometry;
+					const groups = geometry.groups;
+					const attributes = geometry.attributes;
+
+					// for every group create a trimmed geometry that includes only the relevant indices
+					groups.forEach( group => {
+
+						const material = materials[ group.materialIndex ];
+						if ( ! materialToGeometry.get( material ) ) {
+
+							materialToGeometry.set( material, [] );
+
+						}
+
+						// create the trimmed attribute buffers
+						const trimmedGeometry = new BufferGeometry();
+						for ( const name in attributes ) {
+
+							const attribute = attributes[ name ];
+							const trimmedAttribute = new BufferAttribute(
+								attribute.array.slice( group.start, group.start + group.count ),
+								attribute.itemSize,
+								attribute.normalized,
+							);
+							trimmedGeometry.setAttribute( name, trimmedAttribute );
+
+						}
+
+						// create a new index array if it already had one
+						if ( hadIndex ) {
+
+							const count = trimmedGeometry.attributes.position.count;
+							const indexArray = new Array( count )
+								.fill()
+								.map( ( value, index ) => index );
+							trimmedGeometry.setIndex( indexArray );
+
+						}
+						materialToGeometry.get( material ).push( trimmedGeometry );
+
+					} );
+
+				} else {
+
+					const material = c.material;
+					if ( ! materialToGeometry.get( material ) ) {
+
+						materialToGeometry.set( material, [] );
+
+					}
+
+					materialToGeometry.get( material ).push( c.geometry );
 
 				}
-
-				if ( ! materialToMeshes.get( material ) ) {
-
-					materialToMeshes.set( material, [] );
-
-				}
-
-				materialToMeshes.get( material ).push( c );
 
 			}
 
 		} );
 
 		// Merge all geometries with common materials into a single proxy skinned mesh
-		materialToMeshes.forEach( ( meshes, material ) => {
+		materialToGeometry.forEach( ( geometryArray, material ) => {
 
-			const weightCons = meshes.length > 256 ? Uint16Array : Uint8Array;
+			const weightCons = geometryArray.length > 256 ? Uint16Array : Uint8Array;
 			const bones = [];
-			const geometries = meshes.map( ( mesh, index ) => {
+			const geometries = geometryArray.map( ( originalGeometry, index ) => {
 
-				const geometry = mesh.geometry.clone();
+				const geometry = originalGeometry.clone();
 				const count = geometry.attributes.position.count;
 
 				const weights = new Uint8Array( count * 4 );
@@ -178,7 +223,7 @@ export class ProxyBatchedMesh extends Group {
 					new BufferAttribute( new weightCons( count * 4 ).fill( index ), 4 ),
 				);
 
-				const bone = new ProxyBone( mesh );
+				const bone = new ProxyBone( originalGeometry );
 				bones.push( bone );
 
 				return geometry;
@@ -188,7 +233,7 @@ export class ProxyBatchedMesh extends Group {
 			material.skinning = true;
 			const skeleton = new Skeleton( bones );
 			const mergedGeometry = BufferGeometryUtils.mergeBufferGeometries( geometries );
-			const skinnedMesh = new ProxySkinnedMesh( mergedGeometry, material, meshes );
+			const skinnedMesh = new ProxySkinnedMesh( mergedGeometry, material, geometryArray );
 			skinnedMesh.bind( skeleton );
 
 			skinnedMesh.add( ...bones );
