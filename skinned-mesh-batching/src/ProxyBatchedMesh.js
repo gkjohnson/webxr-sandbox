@@ -244,6 +244,8 @@ export class ProxyBatchedMesh extends Group {
 					new BufferAttribute( new weightCons( count * 4 ).fill( index ), 4 ),
 				);
 
+				// TODO: this can create duplicate bones when working with multi material meshes.
+				// We should share the bones if possible.
 				const bone = new ProxyBone( info.mesh );
 				bones.push( bone );
 
