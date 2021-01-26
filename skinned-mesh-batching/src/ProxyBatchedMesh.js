@@ -134,7 +134,8 @@ export class ProxyBatchedMesh extends Group {
 				if ( Array.isArray( c.material ) ) {
 
 					// TODO: Don't clone here or make non indexed geometry. Instead just trim the
-					// the index attribute.
+					// the index attribute. But in that case there will be extra data present in the
+					// attribute buffers?
 					const materials = c.material;
 					const hadIndex = Boolean( c.geometry.index );
 					const geometry = hadIndex ? c.geometry.clone().toNonIndexed() : c.geometry;
