@@ -133,6 +133,8 @@ export class ProxyBatchedMesh extends Group {
 
 				if ( Array.isArray( c.material ) ) {
 
+					// TODO: Don't clone here or make non indexed geometry. Instead just trim the
+					// the index attribute.
 					const materials = c.material;
 					const hadIndex = Boolean( c.geometry.index );
 					const geometry = hadIndex ? c.geometry.clone().toNonIndexed() : c.geometry;
@@ -207,6 +209,8 @@ export class ProxyBatchedMesh extends Group {
 			const bones = [];
 			const geometries = infoArray.map( ( info, index ) => {
 
+				// TODO: Don't clone here. Instead create a new buffer geometry and reuse the same
+				// attributes while adding new ones to cut down on memory.
 				const originalGeometry = info.geometry;
 				const geometry = originalGeometry.clone();
 				const count = geometry.attributes.position.count;
