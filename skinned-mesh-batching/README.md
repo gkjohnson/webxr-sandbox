@@ -1,6 +1,6 @@
 # Skinned Mesh Batching
 
-Utility for merging multiple meshes in a scene into a single skinned mesh to cut down on draw calls.
+Utility for merging multiple meshes in a scene into a single skinned mesh to cut down on draw calls. Included is a utility for remove redundant materials used within an Object3D.
 
 [Demo here](https://gkjohnson.github.io/webxr-sandbox/skinned-mesh-batching/)!
 
