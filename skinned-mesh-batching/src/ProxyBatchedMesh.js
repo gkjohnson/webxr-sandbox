@@ -173,7 +173,10 @@ export class ProxyBatchedMesh extends Group {
 							trimmedGeometry.setIndex( indexArray );
 
 						}
-						materialToGeometry.get( material ).push( trimmedGeometry );
+						materialToGeometry.get( material ).push( {
+							mesh: c,
+							geometry: trimmedGeometry,
+						} );
 
 					} );
 
@@ -186,7 +189,10 @@ export class ProxyBatchedMesh extends Group {
 
 					}
 
-					materialToGeometry.get( material ).push( c.geometry );
+					materialToGeometry.get( material ).push( {
+						mesh: c,
+						geometry: c.geometry,
+					} );
 
 				}
 
@@ -195,12 +201,13 @@ export class ProxyBatchedMesh extends Group {
 		} );
 
 		// Merge all geometries with common materials into a single proxy skinned mesh
-		materialToGeometry.forEach( ( geometryArray, material ) => {
+		materialToGeometry.forEach( ( infoArray, material ) => {
 
-			const weightCons = geometryArray.length > 256 ? Uint16Array : Uint8Array;
+			const weightCons = infoArray.length > 256 ? Uint16Array : Uint8Array;
 			const bones = [];
-			const geometries = geometryArray.map( ( originalGeometry, index ) => {
+			const geometries = infoArray.map( ( info, index ) => {
 
+				const originalGeometry = info.geometry;
 				const geometry = originalGeometry.clone();
 				const count = geometry.attributes.position.count;
 
@@ -223,7 +230,7 @@ export class ProxyBatchedMesh extends Group {
 					new BufferAttribute( new weightCons( count * 4 ).fill( index ), 4 ),
 				);
 
-				const bone = new ProxyBone( originalGeometry );
+				const bone = new ProxyBone( info.mesh );
 				bones.push( bone );
 
 				return geometry;
@@ -233,7 +240,9 @@ export class ProxyBatchedMesh extends Group {
 			material.skinning = true;
 			const skeleton = new Skeleton( bones );
 			const mergedGeometry = BufferGeometryUtils.mergeBufferGeometries( geometries );
-			const skinnedMesh = new ProxySkinnedMesh( mergedGeometry, material, geometryArray );
+
+			const meshSet = new Set( infoArray.map( c => c.mesh ) );
+			const skinnedMesh = new ProxySkinnedMesh( mergedGeometry, material, Array.from( meshSet ) );
 			skinnedMesh.bind( skeleton );
 
 			skinnedMesh.add( ...bones );
