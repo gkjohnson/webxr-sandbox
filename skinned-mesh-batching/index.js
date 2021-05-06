@@ -17,12 +17,14 @@ import {
 } from '//unpkg.com/three@0.124.0/build/three.module.js';
 import { VRButton } from '//unpkg.com/three@0.124.0/examples/jsm/webxr/VRButton.js';
 import { GUI } from '//unpkg.com/three@0.124.0/examples/jsm/libs/dat.gui.module.js';
+import Stats from '//unpkg.com/three@0.124.0/examples/jsm/libs/stats.module.js';
+
 import { XRGamepad } from '../xr-gamepad/src/XRGamepad.js';
 import { ActiveXRGamepad } from '../xr-gamepad/src/ActiveXRGamepad.js';
 import { ProxyBatchedMesh } from './src/ProxyBatchedMesh.js';
 
 let scene, camera, renderer;
-let activeController;
+let activeController, stats;
 let group, skinnedProxy, clock;
 
 const params = {
@@ -141,6 +143,10 @@ function init() {
 	gui.add( params, 'objectScale', 1, 15 );
 	gui.add( params, 'sceneScale', 0.01, 1, 0.01 );
 
+	stats = new Stats();
+	stats.showPanel( 1 );
+	document.body.appendChild( stats.dom );
+
 	onResize();
 	window.addEventListener( 'resize', onResize );
 
@@ -182,7 +188,9 @@ function render() {
 	group.scale.setScalar( params.sceneScale );
 	group.position.z = - 1 + params.sceneScale;
 
+	stats.begin();
 	renderer.render( scene, camera );
+	stats.end();
 
 	const drawCalls = renderer.info.render.calls;
 	const triangles = renderer.info.render.triangles;
