@@ -13,6 +13,8 @@ export class MaterialReducer {
 
 		this.ignoreKeys = ignoreKeys;
 		this.shareTextures = true;
+		this.textures = [];
+		this.materials = [];
 
 	}
 
@@ -136,8 +138,7 @@ export class MaterialReducer {
 
 	process( object ) {
 
-		const textures = [];
-		const materials = [];
+		const { textures, materials } = this;
 		let replaced = 0;
 
 		const processMaterial = material => {

@@ -15,5 +15,7 @@ Utility for merging multiple meshes in a scene into a single skinned mesh to cut
 
 ## TODO
 
-- [ ] Add raycasting to demo
-- [ ] See if depth prepass improves performance for overlapping meshes
+- [ ] Add raycasting to demo.
+- [ ] See if depth prepass improves performance for overlapping meshes.
+- [ ] Improve memory overhead when processing indexed geometry.
+- [ ] Improve ProxyBone matrix update by just retaining and or returning the reference to the proxied mesh matrixWorld.
