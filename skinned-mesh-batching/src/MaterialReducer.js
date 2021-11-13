@@ -60,7 +60,7 @@ export class MaterialReducer {
 					return false;
 
 				}
-				
+
 				if ( a.equals ) {
 
 					return a.equals( b );
